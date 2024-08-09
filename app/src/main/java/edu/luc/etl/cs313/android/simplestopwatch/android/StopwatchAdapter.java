@@ -1,18 +1,25 @@
 package edu.luc.etl.cs313.android.simplestopwatch.android;
 
 import android.app.Activity;
+import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
-
-import java.util.Locale;
-
 import edu.luc.etl.cs313.android.simplestopwatch.R;
 import edu.luc.etl.cs313.android.simplestopwatch.common.Constants;
 import edu.luc.etl.cs313.android.simplestopwatch.common.StopwatchModelListener;
 import edu.luc.etl.cs313.android.simplestopwatch.model.ConcreteStopwatchModelFacade;
 import edu.luc.etl.cs313.android.simplestopwatch.model.StopwatchModelFacade;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * A thin adapter component for the stopwatch.
@@ -58,17 +65,44 @@ public class StopwatchAdapter extends Activity implements StopwatchModelListener
     // TODO remaining lifecycle methods
 
     /**
-     * Updates the seconds and minutes in the UI.
-     * @param time
+     * Plays the device's default notification sound (from ClickCounter program)
      */
-    public void onTimeUpdate(final int time) {
+    @Override
+    public void playDefaultBeep() {
+        final Uri defaultRingtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        final MediaPlayer mediaPlayer = new MediaPlayer();
+        final Context context = getApplicationContext();
+
+        try {
+            mediaPlayer.setDataSource(context, defaultRingtoneUri);
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+            mediaPlayer.prepare();
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mp.release();
+                }
+            });
+            mediaPlayer.start();
+        } catch (final IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+	// TODO remaining lifecycle methods
+
+	/**
+	 * Updates the seconds and minutes in the UI.
+	 * @param time
+	 */
+	public void onTimeUpdate(final int time) {
         // UI adapter responsibility to schedule incoming events on UI thread
         runOnUiThread(() -> {
             final TextView tvS = findViewById(R.id.seconds);
-            final TextView tvM = findViewById(R.id.minutes);
+//            final TextView tvM = findViewById(R.id.minutes);
             final var locale = Locale.getDefault();
             tvS.setText(String.format(locale,"%02d", time % Constants.SEC_PER_MIN));
-            tvM.setText(String.format(locale,"%02d", time / Constants.SEC_PER_MIN));
+//            tvM.setText(String.format(locale,"%02d", time / Constants.SEC_PER_MIN));
         });
     }
 
@@ -89,7 +123,7 @@ public class StopwatchAdapter extends Activity implements StopwatchModelListener
         model.onStartStop();
     }
 
-    public void onLapReset(final View view)  {
-        model.onLapReset();
-    }
+//    public void onLapReset(final View view)  {
+//        model.onLapReset();
+//    }
 }

@@ -12,25 +12,23 @@ class LapRunningState implements StopwatchState {
 
     @Override
     public void onStartStop() {
-        sm.actionStop();
-        sm.toLapStoppedState();
-    }
-
-    @Override
-    public void onLapReset() {
-        sm.toRunningState();
-        sm.actionUpdateView();
-    }
-
-    @Override
-    public void onTick() {
         sm.actionInc();
         sm.toLapRunningState();
     }
 
     @Override
+    public void onTick() {
+        int d = sm.getDelay();
+        sm.setDelay(++d);
+        if (d == 3 || sm.reachMax()) {
+            sm.actionNotifBeep();
+            sm.toRunningState();
+        }
+    }
+
+    @Override
     public void updateView() {
-        sm.updateUILaptime();
+        sm.updateUIRuntime();
     }
 
     @Override

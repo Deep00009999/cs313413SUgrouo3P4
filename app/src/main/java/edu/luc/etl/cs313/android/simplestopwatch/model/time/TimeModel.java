@@ -12,4 +12,7 @@ public interface TimeModel {
     int getRuntime();
     void setLaptime();
     int getLaptime();
+    void decRuntime();
+    boolean isFull();
+    boolean isEmpty();
 }

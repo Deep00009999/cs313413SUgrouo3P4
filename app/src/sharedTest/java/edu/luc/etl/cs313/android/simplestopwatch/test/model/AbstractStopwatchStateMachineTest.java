@@ -1,19 +1,16 @@
 package edu.luc.etl.cs313.android.simplestopwatch.test.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import edu.luc.etl.cs313.android.simplestopwatch.R;
 import edu.luc.etl.cs313.android.simplestopwatch.common.StopwatchModelListener;
 import edu.luc.etl.cs313.android.simplestopwatch.model.clock.ClockModel;
 import edu.luc.etl.cs313.android.simplestopwatch.model.clock.TickListener;
 import edu.luc.etl.cs313.android.simplestopwatch.model.state.StopwatchStateMachine;
 import edu.luc.etl.cs313.android.simplestopwatch.model.time.TimeModel;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Testcase superclass for the stopwatch state machine model. Unit-tests the state
@@ -99,7 +96,7 @@ public abstract class AbstractStopwatchStateMachineTest {
         assertTrue(dependency.isStarted());
         onTickRepeat(5);
         assertTimeEquals(5);
-        model.onLapReset();
+//        model.onLapReset();
         assertEquals(R.string.LAP_RUNNING, dependency.getState());
         assertTrue(dependency.isStarted());
         onTickRepeat(4);
@@ -108,11 +105,9 @@ public abstract class AbstractStopwatchStateMachineTest {
         assertEquals(R.string.LAP_STOPPED, dependency.getState());
         assertFalse(dependency.isStarted());
         assertTimeEquals(5);
-        model.onLapReset();
         assertEquals(R.string.STOPPED, dependency.getState());
         assertFalse(dependency.isStarted());
         assertTimeEquals(9);
-        model.onLapReset();
         assertEquals(R.string.STOPPED, dependency.getState());
         assertFalse(dependency.isStarted());
         assertTimeEquals(0);
@@ -175,6 +170,11 @@ class UnifiedMockDependency implements TimeModel, ClockModel, StopwatchModelList
     }
 
     @Override
+    public void playDefaultBeep() {
+        //playDefaultNotification();
+    }
+
+    @Override
     public void setTickListener(TickListener listener) {
         throw new UnsupportedOperationException();
     }
@@ -192,6 +192,11 @@ class UnifiedMockDependency implements TimeModel, ClockModel, StopwatchModelList
     @Override
     public void resetRuntime() {
         runningTime = 0;
+    }
+
+    @Override
+    public void decRuntime() {
+        runningTime--;
     }
 
     @Override
@@ -213,4 +218,15 @@ class UnifiedMockDependency implements TimeModel, ClockModel, StopwatchModelList
     public int getLaptime() {
         return lapTime;
     }
+
+    @Override
+    public boolean isFull() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
 }

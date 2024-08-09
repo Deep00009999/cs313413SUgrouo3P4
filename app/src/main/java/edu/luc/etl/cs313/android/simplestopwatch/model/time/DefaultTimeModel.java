@@ -11,6 +11,11 @@ public class DefaultTimeModel implements TimeModel {
 
     private int lapTime = -1;
 
+    protected final int low = 0;
+
+    protected final int high = 99;
+
+
     @Override
     public void resetRuntime() {
         runningTime = 0;
@@ -20,6 +25,13 @@ public class DefaultTimeModel implements TimeModel {
     public void incRuntime() {
         runningTime = (runningTime + SEC_PER_TICK) % SEC_PER_HOUR;
     }
+
+    @Override
+	public void decRuntime() {
+		if (!isEmpty()){
+            runningTime -= 1 ;
+        }
+	}
 
     @Override
     public int getRuntime() {
@@ -35,4 +47,15 @@ public class DefaultTimeModel implements TimeModel {
     public int getLaptime() {
         return lapTime;
     }
+
+    @Override
+    public boolean isFull() {
+        return runningTime >= high;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return runningTime <= low;
+    }
+
 }

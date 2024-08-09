@@ -17,19 +17,19 @@ class LapStoppedState implements StopwatchState {
     }
 
     @Override
-    public void onLapReset() {
-        sm.toStoppedState();
-        sm.actionUpdateView();
-    }
-
-    @Override
     public void onTick() {
-        throw new UnsupportedOperationException("onTick");
+        if (sm.countedDown()){
+            sm.toStoppedState();
+        }
+        else{
+            sm.actionDec();
+            sm.toRunningState();
+        }
     }
 
     @Override
     public void updateView() {
-        sm.updateUILaptime();
+        sm.updateUIRuntime();
     }
 
     @Override
